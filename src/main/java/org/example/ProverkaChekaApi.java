@@ -6,19 +6,21 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.example.pojo.PojoJson;
 import org.json.JSONObject;
 
 import javax.net.ssl.SSLContext;
 
 import static org.example.Config.BASE_URL;
 import static org.example.Config.TOKEN;
+import static org.example.WorkWithTG.helperPojoJson;
 import static org.example.WorkWithTG.processMessages;
 
 public class ProverkaChekaApi {
 
-    public String postMassageAndReturnJson(String qrCodeText) throws Exception {
+    public PojoJson.Root getInformationAboutCheckAndReturnPOJO(String qrCodeText) throws Exception {
         CloseableHttpClient httpclient = createHttpClient();
-        String result = null;
+        PojoJson.Root root;
         try {
             JSONObject body = new JSONObject();
             body.put("token", TOKEN);
@@ -36,7 +38,9 @@ public class ProverkaChekaApi {
             try {
                 if (response.getStatusLine().getStatusCode() == 200) {
                     HttpEntity responseEntity = response.getEntity();
-                    result = EntityUtils.toString(responseEntity);
+                    String result = EntityUtils.toString(responseEntity);
+                    root = helperPojoJson.parseJson(result);
+                    //todo обработать варианты ответов
                     processMessages.add("Ответ получен успешно");
 
                 } else {
@@ -48,7 +52,7 @@ public class ProverkaChekaApi {
         } finally {
             httpclient.close();
         }
-        return result;
+        return root;
     }
     private static CloseableHttpClient createHttpClient() throws Exception {
         SSLContext sslcontext = SSLContext.getDefault();

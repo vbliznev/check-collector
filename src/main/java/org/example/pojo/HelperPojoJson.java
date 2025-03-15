@@ -1,4 +1,4 @@
-package org.example;
+package org.example.pojo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,11 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -40,7 +38,7 @@ public class HelperPojoJson {
         // Приводим строку к правильному формату
         checkTimeString = checkTimeString.replace('t', 'T');
         // Парсим строку в LocalDateTime
-        LocalDateTime checkTime = LocalDateTime.parse(checkTimeString, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm"));
+        LocalDateTime checkTime = LocalDateTime.parse(checkTimeString, DateTimeFormatter.ofPattern("ddMMyyyy'T'HHmm"));
 
         // Форматируем дату и время
         String formattedTime = checkTime.format(DateTimeFormatter.ofPattern("HH:mm"));
