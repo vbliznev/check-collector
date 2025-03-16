@@ -9,8 +9,6 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
-import org.example.depricated.SheetsQuickstart;
-import org.example.pojo.HelperPojoJson;
 import org.example.pojo.PojoJson;
 import org.example.pojo.ProductWithTransaction;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -30,24 +28,23 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.example.Config.SUCCESSFUL_PATH;
 import static org.example.CreateCSV.getAllProductsAsCsv;
 import static org.example.DBHElper.saveOnDB;
-import static org.example.pojo.HelperPojoJson.saveJsonToFile;
 import static org.example.pojo.ProductWithTransactionHelper.convertRootsToProductWithTransactions;
 
 public class WorkWithTG extends TelegramLongPollingBot {
     private static final MultiFormatReader reader = new MultiFormatReader();
-    static final Logger logger = Logger.getLogger(SheetsQuickstart.class.getName());
-    public static Long chatId = null;
-    public static List<String> processMessages = new ArrayList<>();
+    static final Logger logger = Logger.getLogger("Logger");
+    private static Long chatId = null;
+    static List<String> processMessages = new ArrayList<>();
+    private ProverkaChekaApi proverkaChekaApi = new ProverkaChekaApi();
+    private String regex = "t=\\d{8}T\\d{4}&s=\\d+\\.\\d{2}&fn=\\d{16}&i=\\d{1,10}&fp=\\d{1,10}&n=[12]";
+    private Pattern pattern = Pattern.compile(regex);
 
     @Override
     public String getBotUsername() {
@@ -58,15 +55,6 @@ public class WorkWithTG extends TelegramLongPollingBot {
     public String getBotToken() {
         return Config.BOT_TOKEN;
     }
-
-    public static String requestJson;
-
-    ProverkaChekaApi proverkaChekaApi = new ProverkaChekaApi();
-
-    static HelperPojoJson helperPojoJson = new HelperPojoJson();
-
-    String regex = "t=\\d{8}T\\d{4}&s=\\d+\\.\\d{2}&fn=\\d{16}&i=\\d{1,10}&fp=\\d{1,10}&n=[12]";
-    Pattern pattern = Pattern.compile(regex);
 
     public void sendInfoAboutStartWork() throws Exception {
         SendMessage confirmMassage = new SendMessage(String.valueOf(chatId), "Начинаю обработку чека");
@@ -80,29 +68,12 @@ public class WorkWithTG extends TelegramLongPollingBot {
         returnStringAboutCheck(root);
     }
 
-    public void returnStringAboutCheck(PojoJson.Root root) throws Exception {
+    public void returnStringAboutCheck(PojoJson.Root root) {
         List<ProductWithTransaction> newProducts = convertRootsToProductWithTransactions(root);
         saveOnDB(newProducts);
         sendMessage(chatId, "Все процессы прошли успешно");
         deleteMessage(String.valueOf(chatId), messageId); // Удаляем сообщение
-//        if (allSavesSuccessful) {
-//            saveFailJson(newProducts);
-//        }
     }
-
-    public static void saveFailJson(List<ProductWithTransaction> newProducts) throws Exception {
-        // Извлекаем значение check_time
-        String checkTimeString = String.valueOf(newProducts.get(0).getDate());
-        // Парсим строку в LocalDateTime
-        LocalDateTime checkTime = LocalDateTime.parse(checkTimeString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
-
-        String nameOfJsonFile = checkTime.format(DateTimeFormatter.ofPattern("dd_MM_yy__HH_mm")) + "__" + newProducts.get(0).getAmount();
-
-        saveJsonToFile(requestJson, SUCCESSFUL_PATH, nameOfJsonFile);
-
-        System.out.println("Файл сохранен");
-    }
-
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -125,7 +96,7 @@ public class WorkWithTG extends TelegramLongPollingBot {
                 }
             } catch (Exception e) {
                 sendMessage(chatId, "Произошла ошибка при обработке вашего сообщения.");
-                logger.info("Ошибка при обработке сообщения:"+e);
+                logger.info("Ошибка при обработке сообщения:" + e);
 
                 throw new RuntimeException("Ошибка при обработке сообщения: ", e);
             }
@@ -159,8 +130,6 @@ public class WorkWithTG extends TelegramLongPollingBot {
                 sendMessage(chatId, "Я не знаю что значит: " + text);
                 throw new RuntimeException("Совпадение не найдено.");
             }
-        } else {
-            sendMessage(chatId, "Я не могу найти нужную информацию");
         }
     }
 
@@ -246,6 +215,7 @@ public class WorkWithTG extends TelegramLongPollingBot {
             throw new RuntimeException("Ошибка при отправке сообщения: ", e);
         }
     }
+
     public void sendCsvToTelegram() {
         String csvData = getAllProductsAsCsv();
 
@@ -269,11 +239,11 @@ public class WorkWithTG extends TelegramLongPollingBot {
 
             // Отправляем документ
             execute(sendDocument);
-            System.out.println("CSV файл успешно отправлен в Telegram!");
+            logger.info("CSV файл успешно отправлен в Telegram!");
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Ошибка при отправке сообщения: " + e.getMessage());
+            logger.info("Ошибка при отправке сообщения: " + e.getMessage());
         }
     }
 

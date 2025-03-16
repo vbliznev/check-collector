@@ -7,7 +7,6 @@ import java.util.List;
 
 import static org.example.ConvertValue.formatNameOfProduct;
 import static org.example.ConvertValue.replaceStoreName;
-import java.util.logging.Logger;
 
 public class ProductWithTransactionHelper {
 
@@ -44,7 +43,6 @@ public class ProductWithTransactionHelper {
             product.setAmount(Double.parseDouble(ecashTotalSum));
         }
 
-        //logger.info("Конвертировано " + productsWithTransaction.size() + " продуктов с транзакцией из JSON.");
         return productsWithTransaction;
     }
 

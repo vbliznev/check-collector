@@ -6,27 +6,28 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.example.pojo.HelperPojoJson;
 import org.example.pojo.PojoJson;
 import org.json.JSONObject;
 
 import javax.net.ssl.SSLContext;
 
-import static org.example.Config.BASE_URL;
-import static org.example.Config.TOKEN;
-import static org.example.WorkWithTG.helperPojoJson;
+import static org.example.Config.PROVERKACHEKA_URL;
+import static org.example.Config.TOKEN_PROVERKACHEKA;
 import static org.example.WorkWithTG.processMessages;
 
 public class ProverkaChekaApi {
+    private final HelperPojoJson helperPojoJson = new HelperPojoJson();
 
     public PojoJson.Root getInformationAboutCheckAndReturnPOJO(String qrCodeText) throws Exception {
         CloseableHttpClient httpclient = createHttpClient();
         PojoJson.Root root;
         try {
             JSONObject body = new JSONObject();
-            body.put("token", TOKEN);
+            body.put("token", TOKEN_PROVERKACHEKA);
             body.put("qrraw", qrCodeText);
 
-            HttpPost httpPost = new HttpPost(BASE_URL);
+            HttpPost httpPost = new HttpPost(PROVERKACHEKA_URL);
             httpPost.setHeader("Content-type", "application/json");
             httpPost.setHeader("Cookie", "ENGID=1.1");
 

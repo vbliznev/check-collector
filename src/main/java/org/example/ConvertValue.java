@@ -33,7 +33,7 @@ public class ConvertValue {
         }
         for (Map.Entry<String, String> entry : STORE_NAME_MAP.entrySet()) {
             if (input.contains(entry.getKey())) {
-                return entry.getValue(); // Возвращаем хорошее название
+                return entry.getValue();
             }
         }
         return input;

@@ -62,12 +62,6 @@ public class ProductWithTransaction {
                 .doubleValue();
     }
 
-    private float roundToTwoDecimalPlaces(float value) {
-        return BigDecimal.valueOf(value)
-                .setScale(2, RoundingMode.HALF_UP)
-                .floatValue();
-    }
-
     // Сеттеры для транзакции
     public void setStoreName(String storeName) {
         this.storeName = storeName;
