@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class ConvertValue {
 
+    // Список названий магазинов
     private static final List<String> STORE_NAMES = Arrays.asList(
             "Магнолия",
             "Красное & Белое",
@@ -18,6 +19,8 @@ public class ConvertValue {
             "Бэст прайс",
             "Мария-Ра"
     );
+
+    // Маппинг для замены некорректных названий магазинов
     private static final Map<String, String> STORE_NAME_MAP = new HashMap<>();
 
     static {
@@ -25,6 +28,7 @@ public class ConvertValue {
         STORE_NAME_MAP.put("Бэст прай", "Fix Price");
     }
 
+    // Метод для замены названия магазина в строке
     public static String replaceStoreName(String input) {
         for (String storeName : STORE_NAMES) {
             if (input.contains(storeName)) {
@@ -39,40 +43,54 @@ public class ConvertValue {
         return input;
     }
 
+    // Метод для форматирования названия продукта
     public static String formatNameOfProduct(String name) {
-        return moveToEnd(moveWordsToFront(cleanProductName(name)));
+        String cleanedName = cleanProductName(name);
+        String movedWords = moveWordsToFront(cleanedName);
+        return moveToEnd(movedWords);
     }
 
+    // Массив строк, которые нужно удалить из названия продукта
+    private static final List<String> STRINGS_TO_REMOVE = Arrays.asList(
+            "БЗМЖ ",
+            "<А>",
+            "\\*",
+            "П.КАФЕ ",
+            "Пивной напиток ",
+            "КД/",
+            "СПз "
+    );
+
+    // Метод для очистки названия продукта от лишних символов и слов
     public static String cleanProductName(String name) {
-        return name.replaceAll("БЗМЖ ", "")
-                .replaceAll("<А>", "")
-                .replaceAll("\\*", "")
-                .replaceAll("П.КАФЕ ", "")
-                .replaceAll("Пивной напиток ", "")
-                .replaceAll("КД/", "")
-                .replaceAll("СПз ", "")
-                .replaceAll("СПз ", "");
+        String result = name;
+        for (String str : STRINGS_TO_REMOVE) {
+            result = result.replaceAll(str, "");
+        }
+        return result;
     }
 
-    private static final List<String> words = Arrays.asList("Сыр", "Молоко", "Лаваш", "Онигири", "Вино");
 
+    // Список ключевых слов, которые нужно переместить в начало
+    private static final List<String> KEYWORDS = Arrays.asList("Сыр", "Молоко", "Лаваш", "Онигири", "Вино");
+
+    // Метод для перемещения ключевых слов в начало строки
     private static String moveWordsToFront(String input) {
         StringBuilder result = new StringBuilder();
         StringBuilder remaining = new StringBuilder(input);
 
-        for (String word : words) {
+        for (String word : KEYWORDS) {
             String wordWithSpace = word + " ";
             while (remaining.toString().contains(wordWithSpace)) {
-                // Удаляем слово из remaining и добавляем его в начало result
                 remaining = new StringBuilder(remaining.toString().replaceFirst(wordWithSpace, ""));
                 result.insert(0, wordWithSpace);
             }
         }
-        // Добавляем оставшуюся часть строки
         result.append(remaining.toString().trim());
         return result.toString();
     }
 
+    // Метод для перемещения кириллических символов в конец строки
     private static String moveToEnd(String input) {
         int index = -1;
         for (int i = 0; i < input.length(); i++) {
@@ -81,8 +99,6 @@ public class ConvertValue {
                 break;
             }
         }
-        // Перемещаем кириллические символы в конец
         return (index != -1) ? input.substring(index) + " " + input.substring(0, index).trim() : input;
     }
-
 }

@@ -14,7 +14,6 @@ import javax.net.ssl.SSLContext;
 
 import static org.example.Config.PROVERKACHEKA_URL;
 import static org.example.Config.TOKEN_PROVERKACHEKA;
-import static org.example.WorkWithTG.processMessages;
 
 public class ProverkaChekaApi {
     private final HelperPojoJson helperPojoJson = new HelperPojoJson();
@@ -33,7 +32,7 @@ public class ProverkaChekaApi {
 
             StringEntity entity = new StringEntity(body.toString());
             httpPost.setEntity(entity);
-            processMessages.add("Запрос сгенерирован успешно");
+            WorkWithTG.logger.info("Запрос сгенерирован успешно");
 
             CloseableHttpResponse response = httpclient.execute(httpPost);
             try {
@@ -42,7 +41,7 @@ public class ProverkaChekaApi {
                     String result = EntityUtils.toString(responseEntity);
                     root = helperPojoJson.parseJson(result);
                     //todo обработать варианты ответов
-                    processMessages.add("Ответ получен успешно");
+                    WorkWithTG.logger.info("Ответ получен успешно");
 
                 } else {
                     throw new RuntimeException("Ошибка при получении информации о чеке ");

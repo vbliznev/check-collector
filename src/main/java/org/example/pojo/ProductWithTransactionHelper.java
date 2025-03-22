@@ -11,6 +11,7 @@ import static org.example.ConvertValue.replaceStoreName;
 public class ProductWithTransactionHelper {
 
     public static List<ProductWithTransaction> convertRootsToProductWithTransactions(PojoJson.Root root) {
+        DateTimeFormatter dateTimeFormatToCheckTime =  DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm");
         List<ProductWithTransaction> productsWithTransaction = new ArrayList<>();
 
         // Обработка продуктов
@@ -34,7 +35,7 @@ public class ProductWithTransactionHelper {
         // Извлекаем значение check_time
         String checkTimeString = root.request.manual.check_time;
         checkTimeString = checkTimeString.replace('t', 'T');
-        LocalDateTime checkTime = LocalDateTime.parse(checkTimeString, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm"));
+        LocalDateTime checkTime = LocalDateTime.parse(checkTimeString, dateTimeFormatToCheckTime);
 
         // Обновляем все продукты с данными о транзакции
         for (ProductWithTransaction product : productsWithTransaction) {

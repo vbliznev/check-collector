@@ -9,9 +9,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.example.Config.getConnection;
+import static org.example.WorkWithTG.chatId;
 import static org.example.WorkWithTG.logger;
 
-public class DBHElper {
+public class DBHelper {
 
     public static void saveOnDB(List<ProductWithTransaction> newProducts) {
         try {
@@ -23,11 +24,9 @@ public class DBHElper {
         }
     }
 
-
     public static void saveProductWithTransactionToDatabase(List<ProductWithTransaction> products) {
         String maxTransactionNumberQuery = "SELECT COALESCE(MAX(transaction_number), 0) FROM \"product_transactions\"";
-        //todo  String insertQuery = "INSERT INTO product_transactions (transaction_number, name, price, quantity, total, store_name, transaction_date, amount, chat_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-         String insertQuery = "INSERT INTO product_transactions (transaction_number, name, price, quantity, total, store_name, transaction_date, amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO product_transactions (transaction_number, name, price, quantity, total, store_name, transaction_date, amount, chat_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
 
@@ -54,7 +53,7 @@ public class DBHElper {
                 insertPstmt.setString(6, product.getStoreName());
                 insertPstmt.setObject(7, product.getDate());
                 insertPstmt.setDouble(8, product.getAmount());
-                //todo insertPstmt.setLong(9, chatId);
+                insertPstmt.setLong(9, chatId);
                 insertPstmt.executeUpdate();
             }
             logger.info("Продукты успешно сохранены в базе данных!");

@@ -14,7 +14,6 @@ public class ProductWithTransaction {
     private LocalDateTime date; // Дата транзакции
     private double amount;    // Сумма транзакции
 
-    // Конструктор
     public ProductWithTransaction(String name, double price, float quantity, String storeName, LocalDateTime date) {
         this.name = name;
         this.price = price;
@@ -25,7 +24,6 @@ public class ProductWithTransaction {
         this.amount = total; // Сумма транзакции равна общей сумме товара
     }
 
-    // Геттеры для товара
     public String getName() {
         return name;
     }
@@ -42,7 +40,6 @@ public class ProductWithTransaction {
         return roundToTwoDecimalPlaces(total);
     }
 
-    // Геттеры для транзакции
     public String getStoreName() {
         return storeName;
     }
